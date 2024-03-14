@@ -45,7 +45,8 @@ def initialize_convex_hull(hand_model, object_model, args):
         faces = mesh_origin.faces
         vertices *= object_model.object_scale_tensor[i].max().item()
         mesh_origin = tm.Trimesh(vertices, faces)
-        mesh_origin.faces = mesh_origin.faces[mesh_origin.remove_degenerate_faces()]
+        # mesh_origin.faces = mesh_origin.faces[mesh_origin.remove_degenerate_faces()]
+        mesh_origin.remove_degenerate_faces()
         vertices += 0.2 * vertices / np.linalg.norm(vertices, axis=1, keepdims=True)
         mesh = tm.Trimesh(vertices=vertices, faces=faces).convex_hull
         vertices = torch.tensor(mesh.vertices, dtype=torch.float, device=device)

@@ -1,0 +1,6 @@
+[submodule "third_party/manopth"]
+	path = third_party/manopth
+	url = git@github.com:hassony2/manopth.git
+[submodule "third_party/TorchSDF"]
+	path = third_party/TorchSDF
+	url = git@github.com:wrc042/TorchSDF.git

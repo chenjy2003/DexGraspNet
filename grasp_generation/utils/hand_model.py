@@ -16,7 +16,7 @@ from pytorch3d.ops.knn import knn_points
 
 
 class HandModel:
-    def __init__(self, mano_root, contact_indices_path, pose_distrib_path, device='cpu'):
+    def __init__(self, mano_root, contact_indices_path, pose_distrib_path, side="right", device='cpu'):
         """
         Create a Hand Model for MANO
         
@@ -35,7 +35,7 @@ class HandModel:
         # load MANO
 
         self.device = device
-        self.manolayer = ManoLayer(mano_root=mano_root, flat_hand_mean=True, use_pca=False).to(device=self.device)
+        self.manolayer = ManoLayer(mano_root=mano_root, side=side, flat_hand_mean=True, use_pca=False).to(device=self.device)
         
         # load contact points and pose distribution
         

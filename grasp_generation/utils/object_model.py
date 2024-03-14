@@ -38,13 +38,13 @@ class ObjectModel:
         self.data_root_path = data_root_path
         self.num_samples = num_samples
 
-        self.object_code_list = None
+        self.object_path_list = None
         self.object_scale_tensor = None
         self.object_mesh_list = None
         self.object_face_verts_list = None
-        self.scale_choice = torch.tensor([0.06, 0.08, 0.1], dtype=torch.float, device=self.device)
+        self.scale_choice = torch.tensor([1.], dtype=torch.float, device=self.device)
 
-    def initialize(self, object_code_list):
+    def initialize(self, object_path_list, flip=False):
         """
         Initialize Object Model with list of objects
         
@@ -52,19 +52,22 @@ class ObjectModel:
         
         Parameters
         ----------
-        object_code_list: list | str
+        object_path_list: list | str
             list of object codes
         """
-        if not isinstance(object_code_list, list):
-            object_code_list = [object_code_list]
-        self.object_code_list = object_code_list
+        if not isinstance(object_path_list, list):
+            object_path_list = [object_path_list]
+        self.object_path_list = object_path_list
         self.object_scale_tensor = []
         self.object_mesh_list = []
         self.object_face_verts_list = []
         self.surface_points_tensor = []
-        for object_code in object_code_list:
+        for object_path in object_path_list:
             self.object_scale_tensor.append(self.scale_choice[torch.randint(0, self.scale_choice.shape[0], (self.batch_size_each, ), device=self.device)])
-            self.object_mesh_list.append(tm.load(os.path.join(self.data_root_path, object_code, "coacd", "decomposed.obj"), force="mesh", process=False))
+            mesh = tm.load(object_path, force="mesh", process=False)
+            if flip:
+                mesh.vertices[:, 0] *= -1
+            self.object_mesh_list.append(mesh)
             object_verts = torch.Tensor(self.object_mesh_list[-1].vertices).to(self.device)
             object_faces = torch.Tensor(self.object_mesh_list[-1].faces).long().to(self.device)
             self.object_face_verts_list.append(index_vertices_by_faces(object_verts, object_faces))
